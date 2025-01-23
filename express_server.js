@@ -21,6 +21,14 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get("/urls", (req, res) => {
+  // need to send variables via inside object
+  const templateVars = { 
+    urls: urlDatabase
+  };
+  // parameters: templateName, variableName
+  res.render("urls_index", templateVars);
+});
 app.get("/hello", (req, res) => {
   // console.log("GET /hello route was accessed");
   res.send("<html><body>Hello <b>World</b></body></html>\n");
