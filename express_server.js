@@ -21,6 +21,13 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get("/urls/:id", (req, res) => {
+  const templateVars = {
+    id: req.params.id,
+    longURL: urlDatabase[req.params.id]
+  }
+  res.render("urls_show", templateVars);
+})
 app.get("/urls", (req, res) => {
   // need to send variables via inside object
   const templateVars = { 
