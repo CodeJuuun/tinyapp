@@ -3,11 +3,19 @@ const app = express();
 const PORT = 8080; //default port 8080
 
 app.set("view engine", "ejs");
+//---------------------------------------------------------
+//short url generator
+function generateRandomString() {
+  const char = "abcdefghijklmnopqrstuvwxyz0123456789"
+  let randomStr = ""
 
-
-function generateRandomString() {}
-
-
+  for (let i = 0; i < 6; i++) {
+    const index = Math.floor(Math.random() * char.length);
+    randomStr += char[index];
+  }
+  return randomStr
+}
+//---------------------------------------------------------
 
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
@@ -20,7 +28,7 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 //---------------------------------------------------------
-app.listen(PORT, () => {
+app.listen(PORT, () => { // the code is what gets express app to start running
   console.log(`Example app listening on port ${PORT}!`);
 });
 //---------------------------------------------------------
@@ -52,14 +60,37 @@ app.get("/urls/new", (req, res) => {
 
 //---------------------------------------------------------
 app.get("/urls/:id", (req, res) => {
-  const templateVars = {
-    id: req.params.id,
-    longURL: urlDatabase[req.params.id]
-  }
-  res.render("urls_show", templateVars);
-})
+  const id = req.params.id;
+  const longURL = urlDatabase[id];
 
-app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  if(longURL) { //if url exists, create templateVars and render the template
+    const templateVars = {
+      id: req.params.id,
+      longURL: longURL
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(404).send("URL not found");
+  }
 });
+//---------------------------------------------------------
+app.get("/u/:id", (req, res) => {
+  const id = req.params.id;
+  const longURL = urlDatabase[id];
+
+  if (longURL) {
+    res.redirect(longURL);
+  } else {
+     res.status(404).send("short URL not found");
+  }
+})
+//---------------------------------------------------------
+app.post("/urls", (req, res) => {
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL; // extract URL from body of req
+  urlDatabase[shortURL] = longURL // assign longURL the id from shortURL generated from function
+
+  console.log(`New URL added: ${longURL} as ${shortURL}`); // Log the POST request body to the console
+  res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
+});
+
