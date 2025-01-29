@@ -44,13 +44,11 @@
         </p>
       </div>
       <div class="card-footer text-muted">
-        <form action="/urls/<%= id %>/show" method="POST" name="longURL">
+        <form action="/urls/<%= id %>" method="POST">
           <h2>Edit</h2>
           <div>
-            <label for="longURL">Update new URL</label>
-            <div>
-              <input type="url" id="longURL" name="longURL" placeholder="http://"value="<%= longURL %>">
-            </div>
+            <label for="longURL">New URL</label>
+            <input type="url" id="longURL" name="longURL" placeholder="http://" value="<%= longURL %>">
             <button type="submit">Submit</button>
           </div>
         </form>
