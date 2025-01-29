@@ -106,6 +106,23 @@ app.post("/urls/:id/delete", (req, res) => {
 
   delete urlDatabase[shortURL];
   return res.redirect("/urls");
+});
+
+//------------
+app.post("/urls/:id", (req, res) => {
+  const shortURL = req.params.id; // capture shortURL from URL parameter
+  const updatedLongURL= req.body.longURL;
+
+  // validation check
+  if(!updatedLongURL) {
+    return res.status(404).send("shortURL not found");
+  }
+
+  if(urlDatabase[shortURL]) {
+    urlDatabase[shortURL] = updatedLongURL;
+    console.log(`Updated URL: ${shortURL} to ${updatedLongURL}`);
+    res.redirect("/urls");
+  };
 })
 //---------------------------------------------------------
 app.listen(PORT, () => { // the code is what gets express app to start running
