@@ -6,17 +6,17 @@ app.set("view engine", "ejs");
 //---------------------------------------------------------
 //short url generator
 function generateRandomString() {
-  const char = "abcdefghijklmnopqrstuvwxyz0123456789"
+  const char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
   let randomStr = ""
 
   for (let i = 0; i < 6; i++) {
     const index = Math.floor(Math.random() * char.length);
     randomStr += char[index];
   }
-  return randomStr
+  return randomStr;
 }
 //---------------------------------------------------------
-
+// key is short URL, value is long URL
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
@@ -27,16 +27,11 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
-//---------------------------------------------------------
-app.listen(PORT, () => { // the code is what gets express app to start running
-  console.log(`Example app listening on port ${PORT}!`);
-});
+
 //---------------------------------------------------------
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-//---------------------------------------------------------
-
 //---------------------------------------------------------
 app.get("/urls", (req, res) => {
   // need to send variables via inside object
@@ -93,4 +88,18 @@ app.post("/urls", (req, res) => {
   console.log(`New URL added: ${longURL} as ${shortURL}`); // Log the POST request body to the console
   res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
 });
+//---------------------------------------------------------
+app.post("/urls/:id/delete", (req, res) => {
+  const shortURL = req.params.id
 
+  if(!urlDatabase[shortURL]) {
+    return res.status(404).send("URL not found");
+  }
+
+  delete urlDatabase[shortURL];
+  return res.redirect("/urls");
+})
+//---------------------------------------------------------
+app.listen(PORT, () => { // the code is what gets express app to start running
+  console.log(`Example app listening on port ${PORT}!`);
+});
