@@ -6,6 +6,7 @@ const PORT = 8080; //default port 8080
 app.set("view engine", "ejs");
 
 //---------------------------------------------------------
+//middleware
 app.use(morgan('dev'));
 //---------------------------------------------------------
 //short url generator
@@ -27,16 +28,18 @@ const urlDatabase = {
 };
  //this code needs to be before ALL routes so it can parse any incoming data into something readable
 app.use(express.urlencoded({ extended: true }));
+
+//---------------------------------------------------------
+// GET
 //---------------------------------------------------------
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
-
-//---------------------------------------------------------
+//------------
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-//---------------------------------------------------------
+//------------
 app.get("/urls", (req, res) => {
   // need to send variables via inside object
   const templateVars = { 
@@ -45,19 +48,16 @@ app.get("/urls", (req, res) => {
   // parameters: templateName, variableName
   res.render("urls_index", templateVars);
 });
-//---------------------------------------------------------
+//------------
 app.get("/hello", (req, res) => {
   // console.log("GET /hello route was accessed");
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
-
-//---------------------------------------------------------
-
+//------------
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
-
-//---------------------------------------------------------
+//------------
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id];
@@ -72,7 +72,7 @@ app.get("/urls/:id", (req, res) => {
     res.status(404).send("URL not found");
   }
 });
-//---------------------------------------------------------
+//------------
 app.get("/u/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id];
@@ -83,6 +83,10 @@ app.get("/u/:id", (req, res) => {
      res.status(404).send("short URL not found");
   }
 })
+
+
+//---------------------------------------------------------
+//POST 
 //---------------------------------------------------------
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
@@ -92,7 +96,7 @@ app.post("/urls", (req, res) => {
   console.log(`New URL added: ${longURL} as ${shortURL}`); // Log the POST request body to the console
   res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
 });
-//---------------------------------------------------------
+//------------
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id
 
