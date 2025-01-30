@@ -129,17 +129,22 @@ app.post("/urls/:id", (req, res) => {
 });
 //------------
 
+let loggedUser = [];
 app.post("/login", (req, res) => {
   const username = req.body.username; // capture username input
 
   // validation check
-  if (!username) {
-    return res.status(404).send("field cannot be empty"); // prevents empty usernames
+  if (loggedUser.includes(username)) {
+    return res.status(400).send("Username is already taken, please choose another one"); // prevents multiple same usernames
   }
-  
-  res.cookie("username", username);
+
+  if (!username) {
+    return res.status(400).send("field cannot be empty") // prevents empty usernames
+  }
+
+  res.cookie("username", username); //add note here 
   res.redirect("/urls"); // redirects to main page after logging in
-})
+});
 //---------------------------------------------------------
 app.listen(PORT, () => { // the code is what gets express app to start running
   console.log(`Example app listening on port ${PORT}!`);
