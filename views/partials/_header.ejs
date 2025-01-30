@@ -20,17 +20,18 @@
     </div>
     <!-- Added form to post login  -->
      <div>
-       <form action="/login" method="POST" >\
+
+      <!-- Displays the username after logging in if it exists and displays login form if none exists -->
+      <% if (username) { %>
+        <p>Welcome, <%= username %>!</p>
+        <% } else { %>
+       <form action="/login" method="POST" >
         <label for="username">UserName</label>
          <input type="text" name="username" placeholder="username" required>
          <button type="submit">Login</button>
        </form>
+       <% } %>
      </div>
 
   </nav>
 </header>
-
-<!-- // input for username
-// submit button
-// action attribute set to /login
-// method is POST -->
