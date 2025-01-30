@@ -46,7 +46,8 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   // need to send variables via inside object
   const templateVars = {
-    urls: urlDatabase
+    urls: urlDatabase,
+    username: req.cookies["username"]
   };
   // parameters: templateName, variableName
   res.render("urls_index", templateVars);
