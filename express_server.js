@@ -152,6 +152,11 @@ app.post("/login", (req, res) => {
   res.cookie("username", username); //add note here
   res.redirect("/urls"); // redirects to main page after logging in
 });
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
+  res.redirect("/urls");
+})
 //---------------------------------------------------------
 app.listen(PORT, () => { // the code is what gets express app to start running
   console.log(`Example app listening on port ${PORT}!`);
