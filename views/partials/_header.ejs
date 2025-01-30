@@ -23,7 +23,7 @@
 
       <!-- Displays the username after logging in if it exists and displays login form if none exists -->
       <% if (username) { %>
-        <p>Welcome, <%= username %>!</p>
+        <p>Logged in as: <%= username %>!</p>
         <% } else { %>
        <form action="/login" method="POST" >
         <label for="username">UserName</label>
