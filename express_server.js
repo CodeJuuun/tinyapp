@@ -92,6 +92,9 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
+app.get("/register", (req, res) => {
+  res.render("register")
+})
 
 //---------------------------------------------------------
 //POST
