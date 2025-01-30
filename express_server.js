@@ -64,10 +64,11 @@ app.get("/urls.json", (req, res) => {
 });
 //------------
 app.get("/urls", (req, res) => {
+  const user = users[req.cookies["user_id"]] || null;
   // need to send variables via inside object
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"] || null
+    user: user
   };
   // parameters: templateName, variableName
   res.render("urls_index", templateVars);
@@ -79,21 +80,22 @@ app.get("/hello", (req, res) => {
 });
 //---------------------------------------------------------
 app.get("/urls/new", (req, res) => {
+  const user = users[req.cookies["user_id"]] || null;
   const templateVars = {
-    username: req.cookies["username"] || null
-  };
+    user: user};
   res.render("urls_new", templateVars);
 });
 //---------------------------------------------------------
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id];
+  const user = users[req.cookies["user_id"]] || null;
 
   if (longURL) { //if url exists, create templateVars and render the template
     const templateVars = {
       id: req.params.id,
       longURL: longURL,
-      username: req.cookies["username"] || null
+      user: user
     };
     res.render("urls_show", templateVars);
   } else {
@@ -180,16 +182,10 @@ app.post("/register", (req, res) => {
 })
 
 //---------------------------------------------------------
-
-let loggedUser = [];
 app.post("/login", (req, res) => {
   const username = req.body.username; // capture username input
 
   // validation check
-  if (loggedUser.includes(username)) {
-    return res.status(400).send("Username is already taken, please choose another one"); // prevents multiple same usernames
-  }
-
   if (!username) {
     return res.status(400).send("field cannot be empty"); // prevents empty usernames
   }
