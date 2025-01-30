@@ -46,8 +46,7 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   // need to send variables via inside object
   const templateVars = {
-    urls: urlDatabase,
-    username: req.cookies["username"]
+    urls: urlDatabase
   };
   // parameters: templateName, variableName
   res.render("urls_index", templateVars);
@@ -119,14 +118,16 @@ app.post("/urls/:id", (req, res) => {
 
   // validation check
   if (!updatedLongURL) {
-    return res.status(404).send("shortURL not found");
+    return res.status(400).send("URL cannot be empty");
   }
 
-  if (urlDatabase[shortURL]) {
+  if (!urlDatabase[shortURL]) {
+    return res.status(404).send("Short URL not found")
+  }
     urlDatabase[shortURL] = updatedLongURL;
     console.log(`Updated URL: ${shortURL} to ${updatedLongURL}`);
     res.redirect("/urls");
-  }
+  
 });
 //------------
 
