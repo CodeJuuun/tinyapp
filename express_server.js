@@ -46,7 +46,8 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   // need to send variables via inside object
   const templateVars = {
-    urls: urlDatabase
+    urls: urlDatabase,
+    username: req.cookies["username"] || null
   };
   // parameters: templateName, variableName
   res.render("urls_index", templateVars);
@@ -58,7 +59,10 @@ app.get("/hello", (req, res) => {
 });
 //------------
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {
+    username: req.cookies["username"] || null
+  };
+  res.render("urls_new", templateVars);
 });
 //------------
 app.get("/urls/:id", (req, res) => {
@@ -68,7 +72,8 @@ app.get("/urls/:id", (req, res) => {
   if (longURL) { //if url exists, create templateVars and render the template
     const templateVars = {
       id: req.params.id,
-      longURL: longURL
+      longURL: longURL,
+      username: req.cookies["username"] || null
     };
     res.render("urls_show", templateVars);
   } else {
