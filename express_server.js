@@ -1,6 +1,7 @@
 const express = require("express");
-const morgan  = require('morgan');
 const app     = express();
+const cookieParser = require("cookie-parser");
+const morgan  = require('morgan');
 const PORT    = 8080; //default port 8080
 
 app.set("view engine", "ejs");
@@ -8,6 +9,10 @@ app.set("view engine", "ejs");
 //---------------------------------------------------------
 //middleware
 app.use(morgan('dev'));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+//this code needs to be before ALL routes so it can parse any incoming data into something readable
+
 //---------------------------------------------------------
 //short url generator
 const generateRandomString = () => {
@@ -26,8 +31,6 @@ const urlDatabase = {
   b2xVn2  : "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
-//this code needs to be before ALL routes so it can parse any incoming data into something readable
-app.use(express.urlencoded({ extended: true }));
 
 //---------------------------------------------------------
 // GET
@@ -124,6 +127,19 @@ app.post("/urls/:id", (req, res) => {
     res.redirect("/urls");
   }
 });
+//------------
+
+app.post("/login", (req, res) => {
+  const username = req.body.username; // capture username input
+
+  // validation check
+  if (!username) {
+    return res.status(404).send("field cannot be empty"); // prevents empty usernames
+  }
+  
+  res.cookie("username", username);
+  res.redirect("/urls"); // redirects to main page after logging in
+})
 //---------------------------------------------------------
 app.listen(PORT, () => { // the code is what gets express app to start running
   console.log(`Example app listening on port ${PORT}!`);
