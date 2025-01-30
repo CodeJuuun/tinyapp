@@ -21,9 +21,14 @@
     <!-- Added form to post login  -->
      <div>
 
-      <!-- Displays the username after logging in if it exists and displays login form if none exists -->
+      <!-- checks if username exists -->
       <% if (username) { %>
+        <!-- if logged in, show user who you're logged in as and display logout button -->
         <p>Logged in as: <%= username %>!</p>
+        <form action="/logout" method="POST">
+          <button type="submit">Logout</button>
+        </form>
+        <!-- otherwise if not logged in, show login form page -->
         <% } else { %>
        <form action="/login" method="POST" >
         <label for="username">UserName</label>
