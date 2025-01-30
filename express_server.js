@@ -127,11 +127,11 @@ app.post("/urls/:id", (req, res) => {
   }
 
   if (!urlDatabase[shortURL]) {
-    return res.status(404).send("Short URL not found")
+    return res.status(404).send("Short URL not found");
   }
-    urlDatabase[shortURL] = updatedLongURL;
-    console.log(`Updated URL: ${shortURL} to ${updatedLongURL}`);
-    res.redirect("/urls");
+  urlDatabase[shortURL] = updatedLongURL;
+  console.log(`Updated URL: ${shortURL} to ${updatedLongURL}`);
+  res.redirect("/urls");
   
 });
 //------------
@@ -146,10 +146,10 @@ app.post("/login", (req, res) => {
   }
 
   if (!username) {
-    return res.status(400).send("field cannot be empty") // prevents empty usernames
+    return res.status(400).send("field cannot be empty"); // prevents empty usernames
   }
 
-  res.cookie("username", username); //add note here 
+  res.cookie("username", username); //add note here
   res.redirect("/urls"); // redirects to main page after logging in
 });
 //---------------------------------------------------------
