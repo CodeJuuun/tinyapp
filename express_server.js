@@ -175,9 +175,20 @@ app.post("/urls/:id", (req, res) => {
 //---------------------------------------------------------
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    const errorMessage = "Email and password cannot be empty.";
+    return res.status(400).render("register", { errorMessage, user:req.user });
+  }
+
+  for (let userID in users) {
+    const user = users[userID];
+    if (user.email === email) {
+      return res.render("register", { errorMessage: "Email is already in use", user: req.user });
+    }
+  }
   // generate userID
   const userID = generateRandomId();
-
   //create new user obj
   const newUser = {
     id: userID,
@@ -189,7 +200,7 @@ app.post("/register", (req, res) => {
   users[userID] = newUser;
 
   res.cookie("user_id", userID);
-  console.log(users);
+  // console.log(users);
   res.redirect("urls")
 })
 
