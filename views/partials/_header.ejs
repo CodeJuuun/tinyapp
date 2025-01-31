@@ -31,8 +31,8 @@
         <!-- otherwise if not logged in, show login form page -->
         <% } else { %>
        <form action="/login" method="POST" >
-        <label for="username">UserName</label>
-         <input type="text" name="username" placeholder="username" required>
+        <label for="email">Email</label>
+         <input type="email" name="email" placeholder="Email" required>
          <button type="submit">Login</button>
        </form>
        <% } %>
