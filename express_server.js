@@ -82,9 +82,10 @@ app.get("/hello", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const user = users[req.cookies["user_id"]] || null;
   const templateVars = {
-    user: user};
+    user: user
+  };
   res.render("urls_new", templateVars);
-});
+  });
 //---------------------------------------------------------
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
@@ -115,7 +116,8 @@ app.get("/u/:id", (req, res) => {
 });
 //---------------------------------------------------------
 app.get("/register", (req, res) => {
-  res.render("register")
+  const user = users[req.cookies["user_id"]] || null;
+  res.render("register", user)
 })
 
 
@@ -183,7 +185,7 @@ app.post("/register", (req, res) => {
 
 //---------------------------------------------------------
 app.post("/login", (req, res) => {
-  const username = req.body.username; // capture username input
+  const { email, password } = req.body; // capture username input
 
   // validation check
   if (!username) {
@@ -195,7 +197,7 @@ app.post("/login", (req, res) => {
 });
 //---------------------------------------------------------
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 })
 //---------------------------------------------------------
