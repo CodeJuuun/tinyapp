@@ -13,6 +13,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 //this code needs to be before ALL routes so it can parse any incoming data into something readable
 
+// helper function
+const setUser = (req, res, next) => {
+  req.user = users[req.cookies["user_id"]] || null;
+  next();
+}
+
+app.use(setUser)
 //---------------------------------------------------------
 //short url generator
 const generateRandomString = () => {
@@ -117,7 +124,7 @@ app.get("/u/:id", (req, res) => {
 //---------------------------------------------------------
 app.get("/register", (req, res) => {
   const user = users[req.cookies["user_id"]] || null;
-  res.render("register", user)
+  res.render("register", { user })
 })
 
 
@@ -188,12 +195,14 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body; // capture username input
 
   // validation check
-  if (!username) {
-    return res.status(400).send("field cannot be empty"); // prevents empty usernames
+  for (let userID in users) {
+    const user = users[userID];
+    if (user.email === email && user.password === password) {
+      res.cookie("user_id", userID);
+      return res.redirect("/urls"); // redirects to main page after logging in
+    }
   }
-
-  res.cookie("username", username); //add note here
-  res.redirect("/urls"); // redirects to main page after logging in
+  return res.status(400).send("field cannot be empty"); // prevents empty usernames
 });
 //---------------------------------------------------------
 app.post("/logout", (req, res) => {
@@ -204,3 +213,6 @@ app.post("/logout", (req, res) => {
 app.listen(PORT, () => { // the code is what gets express app to start running
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+
+
