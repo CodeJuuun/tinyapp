@@ -71,11 +71,10 @@ app.get("/urls.json", (req, res) => {
 });
 //------------
 app.get("/urls", (req, res) => {
-  const user = users[req.cookies["user_id"]] || null;
   // need to send variables via inside object
   const templateVars = {
     urls: urlDatabase,
-    user: user
+    user: req.user // use the user set by helper function
   };
   // parameters: templateName, variableName
   res.render("urls_index", templateVars);
@@ -87,23 +86,20 @@ app.get("/hello", (req, res) => {
 });
 //---------------------------------------------------------
 app.get("/urls/new", (req, res) => {
-  const user = users[req.cookies["user_id"]] || null;
-  const templateVars = {
-    user: user
-  };
-  res.render("urls_new", templateVars);
+  res.render("urls_new", { user: req.user });
   });
+
 //---------------------------------------------------------
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id];
-  const user = users[req.cookies["user_id"]] || null;
+  // const user = users[req.cookies["user_id"]] || null;
 
   if (longURL) { //if url exists, create templateVars and render the template
     const templateVars = {
       id: req.params.id,
       longURL: longURL,
-      user: user
+      user: req.user
     };
     res.render("urls_show", templateVars);
   } else {
@@ -123,11 +119,18 @@ app.get("/u/:id", (req, res) => {
 });
 //---------------------------------------------------------
 app.get("/register", (req, res) => {
-  const user = users[req.cookies["user_id"]] || null;
-  res.render("register", { user })
+if (req.user) {
+  return res.redirect("/urls")
+}
+  res.render("register", { user: req.user })
 })
 
-
+app.get("/login", (req, res) => {
+  if (req.user) {
+    return res.redirect("/urls");
+  }
+  res.render("login");
+})
 //---------------------------------------------------------
 //POST
 //---------------------------------------------------------
@@ -202,7 +205,7 @@ app.post("/login", (req, res) => {
       return res.redirect("/urls"); // redirects to main page after logging in
     }
   }
-  return res.status(400).send("field cannot be empty"); // prevents empty usernames
+  return res.status(400).send("invalid login"); 
 });
 //---------------------------------------------------------
 app.post("/logout", (req, res) => {
