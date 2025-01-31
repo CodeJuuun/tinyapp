@@ -37,6 +37,18 @@ const generateRandomString = () => {
 const generateRandomId = () => {
   return Math.random().toString(36).slice(2, 8);
 }
+
+// helper function to search user by email
+
+const getUserbyEmail = (email) => {
+  for (let userId in users) {
+    if (users[userId].email === email) {
+      //returns the whole user object back
+      return users[userId]; 
+    }
+  }
+  return null; // no else required to write, shorthand
+}
 //---------------------------------------------------------
 // key is short URL, value is long URL
 const urlDatabase = {
