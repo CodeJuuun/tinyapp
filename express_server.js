@@ -40,7 +40,7 @@ const generateRandomId = () => {
 
 // helper function to search user by email
 
-const getUserbyEmail = (email) => {
+const getUserByEmail = (email) => {
   for (let userId in users) {
     if (users[userId].email === email) {
       //returns the whole user object back
@@ -193,11 +193,9 @@ app.post("/register", (req, res) => {
     return res.status(400).render("register", { errorMessage, user:req.user });
   }
 
-  for (let userID in users) {
-    const user = users[userID];
-    if (user.email === email) {
-      return res.render("register", { errorMessage: "Email is already in use", user: req.user });
-    }
+  // use helper function (reuseable code) to DRY
+  if (getUserByEmail(email)) {
+    return res.status(400).render("register", { errorMessage: "Email is already in use", user: req.user });
   }
   // generate userID
   const userID = generateRandomId();
@@ -212,7 +210,7 @@ app.post("/register", (req, res) => {
   users[userID] = newUser;
 
   res.cookie("user_id", userID);
-  // console.log(users);
+  console.log("user data after registration:", users);
   res.redirect("urls")
 })
 
