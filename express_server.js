@@ -141,7 +141,7 @@ app.get("/login", (req, res) => {
   if (req.user) {
     return res.redirect("/urls");
   }
-  res.render("login");
+  res.render("login", { user: req.user});
 })
 //---------------------------------------------------------
 //POST
