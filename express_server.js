@@ -221,8 +221,10 @@ app.post("/login", (req, res) => {
   // replaced with helper function 
 const user = getUserByEmail(email);
 
-console.log("User found: ", user);
-res.send("checking log to see if it worked")
+// error handling
+if (!user) {
+  return res.status(403).send("Error: email not found");
+}
 });
 //---------------------------------------------------------
 app.post("/logout", (req, res) => {
