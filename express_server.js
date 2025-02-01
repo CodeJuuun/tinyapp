@@ -218,15 +218,11 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body; // capture username input
 
-  // validation check
-  for (let userID in users) {
-    const user = users[userID];
-    if (user.email === email && user.password === password) {
-      res.cookie("user_id", userID);
-      return res.redirect("/urls"); // redirects to main page after logging in
-    }
-  }
-  return res.status(400).send("invalid login"); 
+  // replaced with helper function 
+const user = getUserByEmail(email);
+
+console.log("User found: ", user);
+res.send("checking log to see if it worked")
 });
 //---------------------------------------------------------
 app.post("/logout", (req, res) => {
