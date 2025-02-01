@@ -230,6 +230,10 @@ if (!user) {
 if (user.password !== password) {
   return res.status(403).send("Error, password does not match");
 }
+
+// if both checks are valid, set cookie to user.id
+res.cookie("user_id", user.id);
+res.redirect("/urls");
 });
 //---------------------------------------------------------
 app.post("/logout", (req, res) => {
