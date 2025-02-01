@@ -30,11 +30,8 @@
         </form>
         <!-- otherwise if not logged in, show login form page -->
         <% } else { %>
-       <form action="/login" method="POST" >
-        <label for="email">Email</label>
-         <input type="email" name="email" placeholder="Email" required>
-         <button type="submit">Login</button>
-       </form>
+          <a class="nav-item nav-link" href="/login">Login</a>
+          <a class="nav-item nav-link" href="/register">Register</a>
        <% } %>
      </div>
 
