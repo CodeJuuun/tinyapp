@@ -225,6 +225,11 @@ const user = getUserByEmail(email);
 if (!user) {
   return res.status(403).send("Error: email not found");
 }
+
+// check if the password matches
+if (user.password !== password) {
+  return res.status(403).send("Error, password does not match");
+}
 });
 //---------------------------------------------------------
 app.post("/logout", (req, res) => {
