@@ -136,7 +136,7 @@ if (req.user) {
 }
   res.render("register", { user: req.user })
 })
-
+//---------------------------------------------------------
 app.get("/login", (req, res) => {
   if (req.user) {
     return res.redirect("/urls");
