@@ -72,8 +72,6 @@ const users = {
 };
 
 //---------------------------------------------------------
-// GET
-//---------------------------------------------------------
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -90,6 +88,15 @@ app.get("/urls", (req, res) => {
   };
   // parameters: templateName, variableName
   res.render("urls_index", templateVars);
+});
+
+app.post("/urls", (req, res) => {
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL; // extract URL from body of req
+  urlDatabase[shortURL] = longURL;// assign longURL the id from shortURL generated from function
+
+  console.log(`New URL added: ${longURL} as ${shortURL}`); // Log the POST request body to the console
+  res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
 });
 //---------------------------------------------------------
 app.get("/hello", (req, res) => {
@@ -118,53 +125,6 @@ app.get("/urls/:id", (req, res) => {
     res.status(404).send("URL not found");
   }
 });
-//---------------------------------------------------------
-app.get("/u/:id", (req, res) => {
-  const id = req.params.id;
-  const longURL = urlDatabase[id];
-
-  if (longURL) {
-    res.redirect(longURL);
-  } else {
-    res.status(404).send("short URL not found");
-  }
-});
-//---------------------------------------------------------
-app.get("/register", (req, res) => {
-if (req.user) {
-  return res.redirect("/urls")
-}
-  res.render("register", { user: req.user })
-})
-//---------------------------------------------------------
-app.get("/login", (req, res) => {
-  if (req.user) {
-    return res.redirect("/urls");
-  }
-  res.render("login", { user: req.user});
-})
-//---------------------------------------------------------
-//POST
-//---------------------------------------------------------
-app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
-  const longURL = req.body.longURL; // extract URL from body of req
-  urlDatabase[shortURL] = longURL;// assign longURL the id from shortURL generated from function
-
-  console.log(`New URL added: ${longURL} as ${shortURL}`); // Log the POST request body to the console
-  res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
-});
-//---------------------------------------------------------
-app.post("/urls/:id/delete", (req, res) => {
-  const shortURL = req.params.id;
-
-  if (!urlDatabase[shortURL]) {
-    return res.status(404).send("URL not found");
-  }
-
-  delete urlDatabase[shortURL];
-  return res.redirect("/urls");
-});
 
 //---------------------------------------------------------
 app.post("/urls/:id", (req, res) => {
@@ -185,6 +145,38 @@ app.post("/urls/:id", (req, res) => {
   
 });
 //---------------------------------------------------------
+app.get("/u/:id", (req, res) => {
+  const id = req.params.id;
+  const longURL = urlDatabase[id];
+
+  if (longURL) {
+    res.redirect(longURL);
+  } else {
+    res.status(404).send("short URL not found");
+  }
+});
+
+app.post("/urls/:id/delete", (req, res) => {
+  const shortURL = req.params.id;
+
+  if (!urlDatabase[shortURL]) {
+    return res.status(404).send("URL not found");
+  }
+
+  delete urlDatabase[shortURL];
+  return res.redirect("/urls");
+});
+
+
+//---------------------------------------------------------
+// Route to render registration form
+app.get("/register", (req, res) => {
+if (req.user) {
+  return res.redirect("/urls")
+}
+  res.render("register", { user: req.user })
+})
+//-----------------------------
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
 
@@ -215,6 +207,14 @@ app.post("/register", (req, res) => {
 })
 
 //---------------------------------------------------------
+// route to login page
+app.get("/login", (req, res) => {
+  if (req.user) {
+    return res.redirect("/urls");
+  }
+  res.render("login", { user: req.user});
+})
+
 app.post("/login", (req, res) => {
   const { email, password } = req.body; // capture username input
 
@@ -231,15 +231,16 @@ if (user.password !== password) {
   return res.status(403).send("Error, password does not match");
 }
 
-// if both checks are valid, set cookie to user.id
+// if both checks are valid, set cookie to user.id 
 res.cookie("user_id", user.id);
 res.redirect("/urls");
 });
 //---------------------------------------------------------
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
-  res.redirect("/urls");
+  res.redirect("/login");
 })
+
 //---------------------------------------------------------
 app.listen(PORT, () => { // the code is what gets express app to start running
   console.log(`Example app listening on port ${PORT}!`);
