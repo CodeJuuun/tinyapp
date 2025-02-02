@@ -17,9 +17,9 @@ app.use(cookieParser());
 const setUser = (req, res, next) => {
   req.user = users[req.cookies["user_id"]] || null;
   next();
-}
+};
 
-app.use(setUser)
+app.use(setUser);
 //---------------------------------------------------------
 //short url generator
 const generateRandomString = () => {
@@ -36,7 +36,7 @@ const generateRandomString = () => {
 //helper function to generate userID
 const generateRandomId = () => {
   return Math.random().toString(36).slice(2, 8);
-}
+};
 
 // helper function to search user by email
 
@@ -44,11 +44,11 @@ const getUserByEmail = (email) => {
   for (let userId in users) {
     if (users[userId].email === email) {
       //returns the whole user object back
-      return users[userId]; 
+      return users[userId];
     }
   }
   return null; // no else required to write, shorthand
-}
+};
 //---------------------------------------------------------
 // key is short URL, value is long URL
 const urlDatabase = {
@@ -106,7 +106,7 @@ app.get("/hello", (req, res) => {
 //---------------------------------------------------------
 app.get("/urls/new", (req, res) => {
   res.render("urls_new", { user: req.user });
-  });
+});
 
 //---------------------------------------------------------
 app.get("/urls/:id", (req, res) => {
@@ -171,11 +171,11 @@ app.post("/urls/:id/delete", (req, res) => {
 //---------------------------------------------------------
 // Route to render registration form
 app.get("/register", (req, res) => {
-if (req.user) {
-  return res.redirect("/urls")
-}
-  res.render("register", { user: req.user })
-})
+  if (req.user) {
+    return res.redirect("/urls");
+  }
+  res.render("register", { user: req.user });
+});
 //-----------------------------
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
@@ -203,8 +203,8 @@ app.post("/register", (req, res) => {
 
   res.cookie("user_id", userID);
   console.log("user data after registration:", users);
-  res.redirect("urls")
-})
+  res.redirect("urls");
+});
 
 //---------------------------------------------------------
 // route to login page
@@ -213,33 +213,33 @@ app.get("/login", (req, res) => {
     return res.redirect("/urls");
   }
   res.render("login", { user: req.user});
-})
+});
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body; // capture username input
 
-  // replaced with helper function 
-const user = getUserByEmail(email);
+  // replaced with helper function
+  const user = getUserByEmail(email);
 
-// error handling
-if (!user) {
-  return res.status(403).send("Error: email not found");
-}
+  // error handling
+  if (!user) {
+    return res.status(403).send("Error: email not found");
+  }
 
-// check if the password matches
-if (user.password !== password) {
-  return res.status(403).send("Error, password does not match");
-}
+  // check if the password matches
+  if (user.password !== password) {
+    return res.status(403).send("Error, password does not match");
+  }
 
-// if both checks are valid, set cookie to user.id 
-res.cookie("user_id", user.id);
-res.redirect("/urls");
+  // if both checks are valid, set cookie to user.id
+  res.cookie("user_id", user.id);
+  res.redirect("/urls");
 });
 //---------------------------------------------------------
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect("/login");
-})
+});
 
 //---------------------------------------------------------
 app.listen(PORT, () => { // the code is what gets express app to start running
