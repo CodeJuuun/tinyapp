@@ -86,7 +86,7 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase,
     user: req.user // use the user set by helper function
   };
-  // parameters: templateName, variableName
+  //  pass in name of template, object
   res.render("urls_index", templateVars);
 });
 
