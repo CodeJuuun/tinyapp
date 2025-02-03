@@ -26,7 +26,7 @@
         <!-- if logged in, show user who you're logged in as and display logout button -->
         <p>Logged in as: <%= user.email %>!</p>
         <form action="/logout" method="POST">
-          <button type="submit">Logout</button>
+          <button type="submit" class="btn btn-outline-dark">Logout</button>
         </form>
         <!-- otherwise if not logged in, show login form page -->
         <% } else { %>
