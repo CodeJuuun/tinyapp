@@ -181,13 +181,13 @@ app.post("/register", (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    const errorMessage = "Email and password cannot be empty.";
-    return res.status(400).render("register", { errorMessage, user:req.user });
+    return res.status(400).send("Email and password are required");
   }
 
   // use helper function (reuseable code) to DRY
-  if (getUserByEmail(email)) {
-    return res.status(400).render("register", { errorMessage: "Email is already in use", user: req.user });
+  const existingUser = getUserByEmail(email);
+  if (existingUser) {
+    return res.status(400).send("Email you used is already registered")
   }
   // generate userID
   const userID = generateRandomId();
@@ -245,6 +245,3 @@ app.post("/logout", (req, res) => {
 app.listen(PORT, () => { // the code is what gets express app to start running
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-
