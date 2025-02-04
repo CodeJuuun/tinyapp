@@ -233,12 +233,12 @@ app.post("/login", (req, res) => {
 
   // error handling
   if (!user) {
-    return res.status(403).send("Error: email not found");
+    return res.status(403).send("Invalid user");
   }
 
   // check if the password matches
   if (user.password !== password) {
-    return res.status(403).send("Error, password does not match");
+    return res.status(403).send("Incorrect password");
   }
 
   // if both checks are valid, set cookie to user.id
