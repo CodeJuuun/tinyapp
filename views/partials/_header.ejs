@@ -24,7 +24,7 @@
       <!-- checks if username exists -->
       <% if (user) { %>
         <!-- if logged in, show user who you're logged in as and display logout button -->
-        <p>Logged in as: <%= user.email %>!</p>
+        <p class="navbar-text" style="color: black; margin-right: 10px;">Logged in as: <%= user.email %>!</p>
         <form action="/logout" method="POST">
           <button type="submit" class="btn btn-outline-dark">Logout</button>
         </form>
