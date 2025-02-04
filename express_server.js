@@ -39,7 +39,6 @@ const generateRandomId = () => {
 };
 
 // helper function to search user by email
-
 const getUserByEmail = (email) => {
   for (let userId in users) {
     if (users[userId].email === email) {
@@ -72,24 +71,28 @@ const users = {
 };
 
 //---------------------------------------------------------
+// Route to home page
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
-//------------
+
+// returns the urlDatabase in JSON format
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-//------------
+
+// Route to render page showing all URLS
 app.get("/urls", (req, res) => {
   // need to send variables via inside object
   const templateVars = {
     urls: urlDatabase,
-    user: req.user // use the user set by helper function
+    user: req.user
   };
   //  pass in name of template, object
   res.render("urls_index", templateVars);
 });
 
+// Route to handle form submission, creates short URL
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL; // extract URL from body of req
@@ -104,11 +107,15 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 //---------------------------------------------------------
+// Route to render form page for creatting new URL
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", { user: req.user });
+  res.render("urls_new", {
+    user: req.user
+  });
 });
 
 //---------------------------------------------------------
+// Route to display the short URL along with the original long URL
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id];
@@ -145,6 +152,7 @@ app.post("/urls/:id", (req, res) => {
   
 });
 //---------------------------------------------------------
+// Handles redirection to longURL
 app.get("/u/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id];
@@ -156,6 +164,7 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
+// Route to handle deleting URL, and redirects back to url page
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
 
@@ -167,7 +176,6 @@ app.post("/urls/:id/delete", (req, res) => {
   return res.redirect("/urls");
 });
 
-
 //---------------------------------------------------------
 // Route to render registration form
 app.get("/register", (req, res) => {
@@ -177,6 +185,7 @@ app.get("/register", (req, res) => {
   res.render("register", { user: req.user });
 });
 //-----------------------------
+// Route to handle registration form page
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
 
@@ -187,7 +196,7 @@ app.post("/register", (req, res) => {
   // use helper function (reuseable code) to DRY
   const existingUser = getUserByEmail(email);
   if (existingUser) {
-    return res.status(400).send("Email you used is already registered")
+    return res.status(400).send("Email you used is already registered");
   }
   // generate userID
   const userID = generateRandomId();
@@ -215,6 +224,7 @@ app.get("/login", (req, res) => {
   res.render("login", { user: req.user});
 });
 
+// route to handle login form
 app.post("/login", (req, res) => {
   const { email, password } = req.body; // capture username input
 
@@ -236,6 +246,7 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 //---------------------------------------------------------
+//route to handle logout page and redirect back to login page
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect("/login");
