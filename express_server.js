@@ -89,9 +89,17 @@ app.get("/urls.json", (req, res) => {
 
 // Route to render page showing all URLS
 app.get("/urls", (req, res) => {
-  // need to send variables via inside object
+
+  const userUrls = {};
+  //using a loop to include only logged-in users
+
+  for (let shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === req.user.id) { // check if matching
+      userUrls[shortURL] = urlDatabase[shortURL]; // assign empty object to the value of the matched user object in urlDatabase
+    }
+  }
   const templateVars = {
-    urls: urlDatabase,
+    urls: userUrls,
     user: req.user
   };
   //  pass in name of template, object
@@ -111,6 +119,7 @@ urlDatabase[shortURL] = {
   userID: req.user.id
 };
 
+console.log(urlDatabase)
 res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
 });
 //---------------------------------------------------------
