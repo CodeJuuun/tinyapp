@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 //this code needs to be before ALL routes so it can parse any incoming data into something readable
 
-// helper function
+// helper function that runs before every request and sets the req.user to user obj if the user.id exist in cookies. aka if you're logged in or not
 const setUser = (req, res, next) => {
   req.user = users[req.cookies["user_id"]] || null;
   next();
@@ -94,12 +94,16 @@ app.get("/urls", (req, res) => {
 
 // Route to handle form submission, creates short URL
 app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
-  const longURL = req.body.longURL; // extract URL from body of req
-  urlDatabase[shortURL] = longURL;// assign longURL the id from shortURL generated from function
+if (!req.user) {
+  return res.status(403).send("<h1>You must be logged in to do that</h1>") // sends HTML msg 
+}
 
-  console.log(`New URL added: ${longURL} as ${shortURL}`); // Log the POST request body to the console
-  res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
+const shortURL = generateRandomString();
+const longURL = req.body.longURL; // extract URL from body of req
+urlDatabase[shortURL] = longURL;// assign longURL the id from shortURL generated from function
+
+console.log(`New URL added: ${longURL} as ${shortURL}`); // Log the POST request body to the console
+res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
 });
 //---------------------------------------------------------
 app.get("/hello", (req, res) => {
@@ -109,6 +113,10 @@ app.get("/hello", (req, res) => {
 //---------------------------------------------------------
 // Route to render form page for creatting new URL
 app.get("/urls/new", (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login")
+  }
+
   res.render("urls_new", {
     user: req.user
   });
@@ -157,11 +165,10 @@ app.get("/u/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id];
 
-  if (longURL) {
-    res.redirect(longURL);
-  } else {
-    res.status(404).send("short URL not found");
+  if (!longURL) {
+    return res.status(404).send("The URL you are trying to access does not exist");
   }
+  res.redirect(longURL);
 });
 
 // Route to handle deleting URL, and redirects back to url page
@@ -218,8 +225,8 @@ app.post("/register", (req, res) => {
 //---------------------------------------------------------
 // route to login page
 app.get("/login", (req, res) => {
-  if (req.user) {
-    return res.redirect("/urls");
+  if (req.user) { // if already logged in, redirect to /urls
+    return res.redirect("/urls"); 
   }
   res.render("login", { user: req.user});
 });
