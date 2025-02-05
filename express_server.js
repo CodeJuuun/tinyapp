@@ -49,10 +49,16 @@ const getUserByEmail = (email) => {
   return null; // no else required to write, shorthand
 };
 //---------------------------------------------------------
-// key is short URL, value is long URL
+// key is short URL, value is now an object that contains the long url and the associated user
 const urlDatabase = {
-  b2xVn2  : "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  "b2xVn2"  : {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "userID"
+  },
+  "9sm5xK"  : {
+    longURL: "http://www.google.com",
+    userID: "userID"
+  }
 };
 
 // userObj
@@ -100,9 +106,11 @@ if (!req.user) {
 
 const shortURL = generateRandomString();
 const longURL = req.body.longURL; // extract URL from body of req
-urlDatabase[shortURL] = longURL;// assign longURL the id from shortURL generated from function
+urlDatabase[shortURL] = {
+  longURL: longURL, // assign longURL the id from shortURL generated from function
+  userID: req.user.id
+};
 
-console.log(`New URL added: ${longURL} as ${shortURL}`); // Log the POST request body to the console
 res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
 });
 //---------------------------------------------------------
