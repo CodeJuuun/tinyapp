@@ -13,7 +13,7 @@ app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieSession({
   name: "session",
-  keys:['secretkey1', 'secretkey2'], 
+  keys:['secretkey1', 'secretkey2'],
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 // helper function that runs before every request and sets the req.user to user obj if the user.id exist in cookies. aka if you're logged in or not
