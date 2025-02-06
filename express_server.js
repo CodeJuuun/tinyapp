@@ -1,7 +1,7 @@
 const express       = require("express");
 const app           = express();
 const bcrypt        = require("bcryptjs");
-const cookieParser  = require("cookie-parser");
+const cookieSession = require("cookie-session");
 const morgan        = require('morgan');
 const PORT          = 8080; //default port 8080
 
@@ -11,9 +11,11 @@ app.set("view engine", "ejs");
 //middleware
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-//this code needs to be before ALL routes so it can parse any incoming data into something readable
-
+app.use(cookieSession({
+  name: "session",
+  keys:['secretkey1', 'secretkey2'], 
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
 // helper function that runs before every request and sets the req.user to user obj if the user.id exist in cookies. aka if you're logged in or not
 const setUser = (req, res, next) => {
   req.user = users[req.cookies["user_id"]] || null;
