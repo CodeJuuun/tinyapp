@@ -171,7 +171,7 @@ app.post("/urls/:id", (req, res) => {
   if (!urlDatabase[shortURL]) {
     return res.status(404).send("Short URL not found");
   }
-  urlDatabase[shortURL] = updatedLongURL;
+  urlDatabase[shortURL].longURL = updatedLongURL;
   console.log(`Updated URL: ${shortURL} to ${updatedLongURL}`);
   res.redirect("/urls");
   
@@ -180,12 +180,12 @@ app.post("/urls/:id", (req, res) => {
 // Handles redirection to longURL
 app.get("/u/:id", (req, res) => {
   const id = req.params.id;
-  const longURL = urlDatabase[id];
+  const urlData = urlDatabase[id];
 
-  if (!longURL) {
+  if (!urlData) {
     return res.status(404).send("The URL you are trying to access does not exist");
   }
-  res.redirect(longURL);
+  res.redirect(urlData.longURL);
 });
 
 // Route to handle deleting URL, and redirects back to url page
@@ -196,6 +196,9 @@ app.post("/urls/:id/delete", (req, res) => {
     return res.status(404).send("URL not found");
   }
 
+  if (urlDatabase[shortURL].userID !== req.user.id) {
+    return res.status(403).send("You are not authorized to delete this URL")
+  }
   delete urlDatabase[shortURL];
   return res.redirect("/urls");
 });
