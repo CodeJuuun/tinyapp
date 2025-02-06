@@ -267,6 +267,7 @@ app.get("/register", (req, res) => {
 // Route to handle registration form page
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
+  const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (!email || !password) {
     return res.status(400).send("Email and password are required");
@@ -283,7 +284,7 @@ app.post("/register", (req, res) => {
   const newUser = {
     id: userID,
     email: email,
-    password: password
+    password: hashedPassword
   };
 
   //add new user to the global user object
