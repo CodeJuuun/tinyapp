@@ -18,7 +18,7 @@ app.use(cookieSession({
 }));
 // helper function that runs before every request and sets the req.user to user obj if the user.id exist in cookies. aka if you're logged in or not
 const setUser = (req, res, next) => {
-  req.user = users[req.cookies["user_id"]] || null;
+  req.user = users[req.session.user_id] || null;
   next();
 };
 
@@ -293,9 +293,9 @@ app.post("/register", (req, res) => {
   users[userID] = newUser;
   // console.log(users); // check if password is hashed
 
-  res.cookie("user_id", userID);
+  req.session.user_id = userID;
   console.log("user data after registration:", users);
-  res.redirect("urls");
+  res.redirect("/urls");
 });
 
 //---------------------------------------------------------
@@ -314,22 +314,22 @@ app.post("/login", (req, res) => {
 
   // error handling
   if (!user) {
-    return res.status(403).send("Invalid user");
+    return res.status(403).send("Email not found, please register first!");
   }
 
   // check if the password matches
   if (!bcrypt.compareSync(password, user.password)) {
-    return res.status(403).send("Incorrect password");
+    return res.status(403).send("Incorrect password, please try again");
   }
 
   // if both checks are valid, set cookie to user.id
-  res.cookie("user_id", user.id);
+  req.session.user_id = user.id;
   res.redirect("/urls");
 });
 //---------------------------------------------------------
 //route to handle logout page and redirect back to login page
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect("/login");
 });
 
