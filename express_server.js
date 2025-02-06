@@ -307,8 +307,6 @@ app.get("/login", (req, res) => {
 // route to handle login form
 app.post("/login", (req, res) => {
   const { email, password } = req.body; // capture username input
-
-  // replaced with helper function
   const user = getUserByEmail(email);
 
   // error handling
@@ -317,7 +315,7 @@ app.post("/login", (req, res) => {
   }
 
   // check if the password matches
-  if (user.password !== password) {
+  if (!bcrypt.compareSync(password, user.password)) {
     return res.status(403).send("Incorrect password");
   }
 
