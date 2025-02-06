@@ -59,7 +59,7 @@ const urlsForUser = (id) => {
     }
   }
   return userUrls; // returns only the URL that belong to current logged in user.
-}
+};
 //---------------------------------------------------------
 // key is short URL, value is now an object that contains the long url and the associated user
 const urlDatabase = {
@@ -102,7 +102,7 @@ app.get("/urls.json", (req, res) => {
 // Route to render page showing all URLS
 app.get("/urls", (req, res) => {
   if (!req.user) {
-    return res.status(403).send("<h2>You must be logged in to view URLs. <a href='/login'>Login</a> or <a href='/register'>Register</a></h2>")
+    return res.status(403).send("<h2>You must be logged in to view URLs. <a href='/login'>Login</a> or <a href='/register'>Register</a></h2>");
   }
   const userUrl = urlsForUser(req.user.id);
 
@@ -117,19 +117,19 @@ app.get("/urls", (req, res) => {
 
 // Route to handle form submission, creates short URL
 app.post("/urls", (req, res) => {
-if (!req.user) {
-  return res.status(403).send("<h1>You must be logged in to do that</h1>") // sends HTML msg 
-}
+  if (!req.user) {
+    return res.status(403).send("<h1>You must be logged in to do that</h1>"); // sends HTML msg
+  }
 
-const shortURL = generateRandomString();
-const longURL = req.body.longURL; // extract URL from body of req
-urlDatabase[shortURL] = {
-  longURL: longURL, // assign longURL the id from shortURL generated from function
-  userID: req.user.id
-};
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL; // extract URL from body of req
+  urlDatabase[shortURL] = {
+    longURL: longURL, // assign longURL the id from shortURL generated from function
+    userID: req.user.id
+  };
 
-console.log(urlDatabase)
-res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
+  console.log(urlDatabase);
+  res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
 });
 //---------------------------------------------------------
 app.get("/hello", (req, res) => {
@@ -140,7 +140,7 @@ app.get("/hello", (req, res) => {
 // Route to render form page for creatting new URL
 app.get("/urls/new", (req, res) => {
   if (!req.user) {
-    return res.redirect("/login")
+    return res.redirect("/login");
   }
 
   res.render("urls_new", {
@@ -151,18 +151,18 @@ app.get("/urls/new", (req, res) => {
 
 //---------------------------------------------------------
 
- // check if user is owner of url before allowing access, if not, send 403 error
+// check if user is owner of url before allowing access, if not, send 403 error
 //---------------------------------------------------------
 // Route to display the short URL along with the original long URL
 app.get("/urls/:id", (req, res) => {
   if (!req.user) {
-    return res.status(403).send("<h2>You must be logged in to view URL details.</h2>")
+    return res.status(403).send("<h2>You must be logged in to view URL details.</h2>");
   }
   const shortURL = req.params.id;
   const urlData = urlDatabase[shortURL]; // capture URL data
 
   if (!urlData) {
-    res.status(404).send("URL not found")
+    res.status(404).send("URL not found");
   }
 
   if (urlData.userID !== req.user.id) { // check if user is logged in
@@ -170,12 +170,12 @@ app.get("/urls/:id", (req, res) => {
   }
  
   //if url exists, create templateVars and render the template
-    const templateVars = {
-      id: shortURL,
-      longURL: urlData.longURL,
-      user: req.user
-    };
-    res.render("urls_show", templateVars);
+  const templateVars = {
+    id: shortURL,
+    longURL: urlData.longURL,
+    user: req.user
+  };
+  res.render("urls_show", templateVars);
 });
 
 //---------------------------------------------------------
@@ -185,7 +185,7 @@ app.post("/urls/:id", (req, res) => {
 
   // validation check
   if (!req.user) {
-    return res.status(403).send("You must be logged in first")
+    return res.status(403).send("You must be logged in first");
   }
 
   if (!urlDatabase[shortURL]) {
@@ -193,7 +193,7 @@ app.post("/urls/:id", (req, res) => {
   }
 
   if (urlDatabase[shortURL].userID !== req.user.id) {
-    return res.status(403).send("You're not authorized to edit this URL")
+    return res.status(403).send("You're not authorized to edit this URL");
   }
   urlDatabase[shortURL].longURL = updatedLongURL;
   console.log(`Updated URL: ${shortURL} to ${updatedLongURL}`);
@@ -217,7 +217,7 @@ app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
 
   if (!req.user) {
-    return res.status(403).send("You must be logged in first")
+    return res.status(403).send("You must be logged in first");
   }
 
   if (!urlDatabase[shortURL]) {
@@ -225,7 +225,7 @@ app.post("/urls/:id/delete", (req, res) => {
   }
 
   if (urlDatabase[shortURL].userID !== req.user.id) {
-    return res.status(403).send("You are not authorized to delete this URL")
+    return res.status(403).send("You are not authorized to delete this URL");
   }
 
   delete urlDatabase[shortURL];
@@ -275,7 +275,7 @@ app.post("/register", (req, res) => {
 // route to login page
 app.get("/login", (req, res) => {
   if (req.user) { // if already logged in, redirect to /urls
-    return res.redirect("/urls"); 
+    return res.redirect("/urls");
   }
   res.render("login", { user: req.user});
 });
