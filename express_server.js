@@ -90,7 +90,7 @@ app.get("/urls.json", (req, res) => {
 // Route to render page showing all URLS
 app.get("/urls", (req, res) => {
   if (!req.user) {
-    return res.status(403).send("You must be logged in to view URLS.")
+    return res.status(403).send("<h2>You must be logged in to view URLs. <a href='/login'>Login</a> or <a href='/register'>Register</a></h2>")
   }
   const userUrl = {};
   // only show urls to the logged in user
