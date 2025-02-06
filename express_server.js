@@ -100,12 +100,12 @@ const urlDatabase = {
 
 const users = {
   user1: {
-    id: "userID",
+    id: generateRandomId(),
     email: "[email protected]",
     password: "password098",
   },
   user2: {
-    id: "user2ID",
+    id: generateRandomId(),
     email: "[email protected]",
     password: "password123",
   },
@@ -289,6 +289,7 @@ app.post("/register", (req, res) => {
 
   //add new user to the global user object
   users[userID] = newUser;
+  // console.log(users); // check if password is hashed
 
   res.cookie("user_id", userID);
   console.log("user data after registration:", users);
