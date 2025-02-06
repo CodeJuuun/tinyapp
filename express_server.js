@@ -89,9 +89,19 @@ app.get("/urls.json", (req, res) => {
 
 // Route to render page showing all URLS
 app.get("/urls", (req, res) => {
+  if (!req.user) {
+    return res.status(403).send("You must be logged in to view URLS.")
+  }
+  const userUrl = {};
+  // only show urls to the logged in user
+  for (let shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === req.user.id) {
+      userUrl[shortURL] = urlDatabase[shortURL];
+    }
+  }
   // need to send variables via inside object
   const templateVars = {
-    urls: urlDatabase,
+    urls: userUrl,
     user: req.user
   };
   //  pass in name of template, object
@@ -164,12 +174,16 @@ app.post("/urls/:id", (req, res) => {
   const updatedLongURL  = req.body.longURL;
 
   // validation check
-  if (!updatedLongURL) {
-    return res.status(400).send("URL cannot be empty");
+  if (!req.user) {
+    return res.status(403).send("You must be logged in first")
   }
 
   if (!urlDatabase[shortURL]) {
     return res.status(404).send("Short URL not found");
+  }
+
+  if (urlDatabase[shortURL].userID !== req.user.id) {
+    return res.status(403).send("You're not authorized to edit this URL")
   }
   urlDatabase[shortURL].longURL = updatedLongURL;
   console.log(`Updated URL: ${shortURL} to ${updatedLongURL}`);
@@ -192,6 +206,10 @@ app.get("/u/:id", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
 
+  if (!req.user) {
+    return res.status(403).send("You must be logged in first")
+  }
+
   if (!urlDatabase[shortURL]) {
     return res.status(404).send("URL not found");
   }
@@ -199,6 +217,7 @@ app.post("/urls/:id/delete", (req, res) => {
   if (urlDatabase[shortURL].userID !== req.user.id) {
     return res.status(403).send("You are not authorized to delete this URL")
   }
+
   delete urlDatabase[shortURL];
   return res.redirect("/urls");
 });
