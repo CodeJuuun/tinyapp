@@ -89,17 +89,9 @@ app.get("/urls.json", (req, res) => {
 
 // Route to render page showing all URLS
 app.get("/urls", (req, res) => {
-
-  const userUrls = {};
-  //using a loop to include only logged-in users
-
-  for (let shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === req.user.id) { // check if matching
-      userUrls[shortURL] = urlDatabase[shortURL]; // assign empty object to the value of the matched user object in urlDatabase
-    }
-  }
+  // need to send variables via inside object
   const templateVars = {
-    urls: userUrls,
+    urls: urlDatabase,
     user: req.user
   };
   //  pass in name of template, object
@@ -139,23 +131,31 @@ app.get("/urls/new", (req, res) => {
   });
 });
 
+
+//---------------------------------------------------------
+
+ // check if user is owner of url before allowing access, if not, send 403 error
 //---------------------------------------------------------
 // Route to display the short URL along with the original long URL
 app.get("/urls/:id", (req, res) => {
-  const id = req.params.id;
-  const longURL = urlDatabase[id];
-  // const user = users[req.cookies["user_id"]] || null;
+  const shortURL = req.params.id;
+  const urlData = urlDatabase[shortURL]; // capture URL data
 
-  if (longURL) { //if url exists, create templateVars and render the template
+  if (!urlData) {
+    res.status(404).send("URL not found")
+  }
+
+  if (urlData.userID !== req.user.id) { // check if user is logged in
+    return res.status(403).send("You are not authorized to view URL");
+  }
+ 
+  //if url exists, create templateVars and render the template
     const templateVars = {
-      id: req.params.id,
-      longURL: longURL,
+      id: shortURL,
+      longURL: urlData.longURL,
       user: req.user
     };
     res.render("urls_show", templateVars);
-  } else {
-    res.status(404).send("URL not found");
-  }
 });
 
 //---------------------------------------------------------
