@@ -156,7 +156,7 @@ app.get("/urls/new", (req, res) => {
 // Route to display the short URL along with the original long URL
 app.get("/urls/:id", (req, res) => {
   if (!req.user) {
-    return res.status(403).send("<h2>You must be logged in to view URL details.")
+    return res.status(403).send("<h2>You must be logged in to view URL details.</h2>")
   }
   const shortURL = req.params.id;
   const urlData = urlDatabase[shortURL]; // capture URL data
