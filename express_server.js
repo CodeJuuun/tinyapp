@@ -104,13 +104,8 @@ app.get("/urls", (req, res) => {
   if (!req.user) {
     return res.status(403).send("<h2>You must be logged in to view URLs. <a href='/login'>Login</a> or <a href='/register'>Register</a></h2>")
   }
-  const userUrl = {};
-  // only show urls to the logged in user
-  for (let shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === req.user.id) {
-      userUrl[shortURL] = urlDatabase[shortURL];
-    }
-  }
+  const userUrl = urlsForUser(req.user.id);
+
   // need to send variables via inside object
   const templateVars = {
     urls: userUrl,
