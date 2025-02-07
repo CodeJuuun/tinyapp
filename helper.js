@@ -1,8 +1,8 @@
-const getUserByEmail = (email) => {
-  for (let userId in users) {
-    if (users[userId].email === email) {
+const getUserByEmail = (email, database) => {
+  for (let userId in database) {
+    if (database[userId].email === email) {
       //returns the whole user object back
-      return users[userId];
+      return database[userId];
     }
   }
   return null; // no else required to write, shorthand

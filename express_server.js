@@ -3,6 +3,7 @@ const app           = express();
 const bcrypt        = require("bcryptjs");
 const cookieSession = require("cookie-session");
 const morgan        = require('morgan');
+const { getUserByEmail } = require("./helper");
 const PORT          = 8080; //default port 8080
 
 app.set("view engine", "ejs");
@@ -42,15 +43,7 @@ const generateRandomId = () => {
 };
 
 // helper function to search user by email
-const getUserByEmail = (email) => {
-  for (let userId in users) {
-    if (users[userId].email === email) {
-      //returns the whole user object back
-      return users[userId];
-    }
-  }
-  return null; // no else required to write, shorthand
-};
+
 
 // function to filter URLS that belong to specific users
 const urlsForUser = (id) => {
