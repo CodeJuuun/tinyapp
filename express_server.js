@@ -57,28 +57,7 @@ const urlsForUser = (id) => {
   return userUrls; // returns only the URL that belong to current logged in user.
 };
 
-// // checks if user is logged in
-// const loggedInUser = (req, res) => {
-//   if (!req.user) {
-//     return res.status(403).send("You must be logged in first")
-//   }
-// };
-
-// // checks if URL exists
-// const checkURL = (shortURL, res) => {
-//   if (!urlDatabase[shortURL]) {
-//     return res.status(404).send("URL not found");
-//   }
-// };
-
-// // function to check if URL belongs to logged in user
-
-// const checkURLOwner = (shortURL, req, res) => {
-//   if (urlDatabase[shortURL].userId !== req.user.id) {
-//     return res.status(403).send("You're not authorized to edit this URL")
-//   }
-// }
-//---------------------------------------------------------
+//--------------------------------------------------------
 // key is short URL, value is now an object that contains the long url and the associated user
 const urlDatabase = {
   "b2xVn2"  : {
