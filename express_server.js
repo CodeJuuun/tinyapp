@@ -117,7 +117,6 @@ app.post("/urls", (req, res) => {
     userId: req.user.id
   };
 
-  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
 });
 //---------------------------------------------------------
