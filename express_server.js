@@ -18,7 +18,7 @@ app.use(cookieSession({
 }));
 // helper function that runs before every request and sets the req.user to user obj if the user.id exist in cookies. aka if you're logged in or not
 const setUser = (req, res, next) => {
-  req.user = users[req.session.user_id] || null;
+  req.user = users[req.session.userId] || null;
   next();
 };
 
@@ -36,7 +36,7 @@ const generateRandomString = () => {
   return randomStr;
 };
 
-//helper function to generate userID
+//helper function to generate userId
 const generateRandomId = () => {
   return Math.random().toString(36).slice(2, 8);
 };
@@ -57,7 +57,7 @@ const urlsForUser = (id) => {
   const userUrls = {}; // will be used to store filtered URLS
 
   for (let shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) { // checks if URL belongs to current user, if so, add to filtered URLS
+    if (urlDatabase[shortURL].userId === id) { // checks if URL belongs to current user, if so, add to filtered URLS
       userUrls[shortURL] = urlDatabase[shortURL];
     }
   }
@@ -81,7 +81,7 @@ const urlsForUser = (id) => {
 // // function to check if URL belongs to logged in user
 
 // const checkURLOwner = (shortURL, req, res) => {
-//   if (urlDatabase[shortURL].userID !== req.user.id) {
+//   if (urlDatabase[shortURL].userId !== req.user.id) {
 //     return res.status(403).send("You're not authorized to edit this URL")
 //   }
 // }
@@ -90,11 +90,11 @@ const urlsForUser = (id) => {
 const urlDatabase = {
   "b2xVn2"  : {
     longURL: "http://www.lighthouselabs.ca",
-    userID: "userID"
+    userId: "userId"
   },
   "9sm5xK"  : {
     longURL: "http://www.google.com",
-    userID: "userID"
+    userId: "userId"
   }
 };
 
@@ -150,7 +150,7 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL; // extract URL from body of req
   urlDatabase[shortURL] = {
     longURL: longURL, // assign longURL the id from shortURL generated from function
-    userID: req.user.id
+    userId: req.user.id
   };
 
   console.log(urlDatabase);
@@ -190,7 +190,7 @@ app.get("/urls/:id", (req, res) => {
     res.status(404).send("URL not found");
   }
 
-  if (urlData.userID !== req.user.id) { // check if user is logged in
+  if (urlData.userId !== req.user.id) { // check if user is logged in
     return res.status(403).send("You are not authorized to view URL");
   }
  
@@ -217,7 +217,7 @@ app.post("/urls/:id", (req, res) => {
     return res.status(404).send("Short URL not found");
   }
 
-  if (urlDatabase[shortURL].userID !== req.user.id) {
+  if (urlDatabase[shortURL].userId !== req.user.id) {
     return res.status(403).send("You're not authorized to edit this URL");
   }
   urlDatabase[shortURL].longURL = updatedLongURL;
@@ -249,7 +249,7 @@ app.post("/urls/:id/delete", (req, res) => {
     return res.status(404).send("URL not found");
   }
 
-  if (urlDatabase[shortURL].userID !== req.user.id) {
+  if (urlDatabase[shortURL].userId !== req.user.id) {
     return res.status(403).send("You are not authorized to delete this URL");
   }
 
@@ -280,20 +280,20 @@ app.post("/register", (req, res) => {
   if (existingUser) {
     return res.status(400).send("Email you used is already registered");
   }
-  // generate userID
-  const userID = generateRandomId();
+  // generate userId
+  const userId = generateRandomId();
   //create new user obj
   const newUser = {
-    id: userID,
+    id: userId,
     email: email,
     password: hashedPassword
   };
 
   //add new user to the global user object
-  users[userID] = newUser;
+  users[userId] = newUser;
   // console.log(users); // check if password is hashed
 
-  req.session.user_id = userID;
+  req.session.userId = userId;
   console.log("user data after registration:", users);
   res.redirect("/urls");
 });
@@ -323,7 +323,7 @@ app.post("/login", (req, res) => {
   }
 
   // if both checks are valid, set cookie to user.id
-  req.session.user_id = user.id;
+  req.session.userId = user.id;
   res.redirect("/urls");
 });
 //---------------------------------------------------------
