@@ -5,7 +5,7 @@ const getUserByEmail = (email, database) => {
       return database[userId];
     }
   }
-  return undefined; // no else required to write, shorthand
+  return; // no else required to write, shorthand
 };
 
 
