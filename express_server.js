@@ -28,22 +28,14 @@ app.use(setUser);
 //short url generator
 const generateRandomString = () => {
   const char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let randomStr = "";
+  const charLength = char.length;
+  let result = "";
 
   for (let i = 0; i < 6; i++) {
-    const index = Math.floor(Math.random() * char.length);
-    randomStr += char[index];
+    result += char.charAt(Math.floor(Math.random() * charLength));
   }
-  return randomStr;
+  return result;
 };
-
-//helper function to generate userId
-const generateRandomId = () => {
-  return Math.random().toString(36).slice(2, 8);
-};
-
-// helper function to search user by email
-
 
 // function to filter URLS that belong to specific users
 const urlsForUser = (id) => {
@@ -74,12 +66,12 @@ const urlDatabase = {
 
 const users = {
   user1: {
-    id: generateRandomId(),
+    id: generateRandomString(),
     email: "[email protected]",
     password: "password098",
   },
   user2: {
-    id: generateRandomId(),
+    id: generateRandomString(),
     email: "[email protected]",
     password: "password123",
   },
@@ -253,7 +245,7 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Email you used is already registered");
   }
   // generate userId
-  const userId = generateRandomId();
+  const userId = generateRandomString();
   //create new user obj
   const newUser = {
     id: userId,
