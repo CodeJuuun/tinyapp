@@ -3,7 +3,7 @@ const app           = express();
 const bcrypt        = require("bcryptjs");
 const cookieSession = require("cookie-session");
 const morgan        = require('morgan');
-const { getUserByEmail } = require("./helper");
+const { getUserByEmail } = require("./helpers");
 const PORT          = 8080; //default port 8080
 
 app.set("view engine", "ejs");
