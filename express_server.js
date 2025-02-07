@@ -269,7 +269,7 @@ app.post("/register", (req, res) => {
   }
 
   // use helper function (reuseable code) to DRY
-  const existingUser = getUserByEmail(email);
+  const existingUser = getUserByEmail(email, users);
   if (existingUser) {
     return res.status(400).send("Email you used is already registered");
   }
@@ -303,7 +303,7 @@ app.get("/login", (req, res) => {
 // route to handle login form
 app.post("/login", (req, res) => {
   const { email, password } = req.body; // capture username input
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(email, users);
 
   // error handling
   if (!user) {
