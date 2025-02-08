@@ -9,8 +9,13 @@ const getUserByEmail = (email, database) => {
 };
 
 // function to filter URLS that belong to specific users
-const urlsForUser = (id) => {
+const urlsForUser = (id, urlDatabase) => {
   const userUrls = {}; // will be used to store filtered URLS
+
+  // make sure urlDatabase is not empty
+  if (!urlDatabase) {
+    return userUrls;
+  }
 
   for (let shortURL in urlDatabase) {
     if (urlDatabase[shortURL].userId === id) { // checks if URL belongs to current user, if so, add to filtered URLS
