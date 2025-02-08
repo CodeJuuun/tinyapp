@@ -4,10 +4,9 @@ const bcrypt        = require("bcryptjs");
 const cookieSession = require("cookie-session");
 const morgan        = require('morgan');
 const { getUserByEmail, urlsForUser, generateRandomString } = require("./helpers");
-const PORT          = 8080; //default port 8080
+const PORT          = 8080;
 
 app.set("view engine", "ejs");
-
 //---------------------------------------------------------
 //middleware
 app.use(morgan('dev'));
@@ -17,7 +16,7 @@ app.use(cookieSession({
   keys:['secretkey1', 'secretkey2'],
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
-// helper function that runs before every request and sets the req.user to user obj if the user.id exist in cookies. aka if you're logged in or not
+
 const setUser = (req, res, next) => {
   req.user = users[req.session.userId] || null;
   next();
@@ -52,70 +51,46 @@ const users = {
   },
 };
 
-//---------------------------------------------------------
+//-------------------------------------------------------------------
 // Route to home page
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
-
+//-------------------------------------------------------------------
 // returns the urlDatabase in JSON format
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-
+//-------------------------------------------------------------------
 // Route to render page showing all URLS
 app.get("/urls", (req, res) => {
   if (!req.user) {
     return res.status(403).send("<h2>You must be logged in to view URLs. <a href='/login'>Login</a> or <a href='/register'>Register</a></h2>");
   }
   const userUrl = urlsForUser(req.user.id);
-
-  // need to send variables via inside object
   const templateVars = {
     urls: userUrl,
     user: req.user
   };
-  //  pass in name of template, object
   res.render("urls_index", templateVars);
 });
-
+//-------------------------------------------------------------------
 // Route to handle form submission, creates short URL
 app.post("/urls", (req, res) => {
   if (!req.user) {
-    return res.status(403).send("<h1>You must be logged in to do that</h1>"); // sends HTML msg
+    return res.status(403).send("<h1>You must be logged in to do that</h1>");
   }
 
   const shortURL = generateRandomString();
   const longURL = req.body.longURL; // extract URL from body of req
   urlDatabase[shortURL] = {
-    longURL: longURL, // assign longURL the id from shortURL generated from function
+    longURL: longURL,
     userId: req.user.id
   };
 
-  res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${shortURL}`);
 });
-//---------------------------------------------------------
-app.get("/hello", (req, res) => {
-  // console.log("GET /hello route was accessed");
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-//---------------------------------------------------------
-// Route to render form page for creatting new URL
-app.get("/urls/new", (req, res) => {
-  if (!req.user) {
-    return res.redirect("/login");
-  }
-
-  res.render("urls_new", {
-    user: req.user
-  });
-});
-
-
-//---------------------------------------------------------
-
-// check if user is owner of url before allowing access, if not, send 403 error
-//---------------------------------------------------------
+//-------------------------------------------------------------------
 // Route to display the short URL along with the original long URL
 app.get("/urls/:id", (req, res) => {
   if (!req.user) {
@@ -129,7 +104,7 @@ app.get("/urls/:id", (req, res) => {
   }
 
   if (urlData.userId !== req.user.id) { // check if user is logged in
-    return res.status(403).send("You are not authorized to view URL");
+    return res.status(403).send("You are not authorized to view this URL");
   }
  
   //if url exists, create templateVars and render the template
@@ -140,8 +115,19 @@ app.get("/urls/:id", (req, res) => {
   };
   res.render("urls_show", templateVars);
 });
+//-------------------------------------------------------------------
+// Handles redirection to longURL
+app.get("/u/:id", (req, res) => {
+  const id = req.params.id;
+  const urlData = urlDatabase[id];
 
-//---------------------------------------------------------
+  if (!urlData) {
+    return res.status(404).send("The URL you are trying to access does not exist");
+  }
+  res.redirect(urlData.longURL);
+});
+
+//-------------------------------------------------------------------
 app.post("/urls/:id", (req, res) => {
   const shortURL        = req.params.id; // capture shortURL from URL parameter
   const updatedLongURL  = req.body.longURL;
@@ -163,18 +149,7 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
   
 });
-//---------------------------------------------------------
-// Handles redirection to longURL
-app.get("/u/:id", (req, res) => {
-  const id = req.params.id;
-  const urlData = urlDatabase[id];
-
-  if (!urlData) {
-    return res.status(404).send("The URL you are trying to access does not exist");
-  }
-  res.redirect(urlData.longURL);
-});
-
+//-------------------------------------------------------------------
 // Route to handle deleting URL, and redirects back to url page
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
@@ -195,7 +170,19 @@ app.post("/urls/:id/delete", (req, res) => {
   return res.redirect("/urls");
 });
 
-//---------------------------------------------------------
+//-------------------------------------------------------------------
+// Route to render form page for creatting new URL
+app.get("/urls/new", (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login");
+  }
+
+  res.render("urls_new", {
+    user: req.user
+  });
+});
+
+//-------------------------------------------------------------------
 // Route to render registration form
 app.get("/register", (req, res) => {
   if (req.user) {
@@ -203,7 +190,7 @@ app.get("/register", (req, res) => {
   }
   res.render("register", { user: req.user });
 });
-//-----------------------------
+//-------------------------------------------------------------------
 // Route to handle registration form page
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
@@ -213,13 +200,12 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Email and password are required");
   }
 
-  // use helper function (reuseable code) to DRY
   const existingUser = getUserByEmail(email, users);
   if (existingUser) {
     return res.status(400).send("Email you used is already registered");
   }
-  // generate userId
   const userId = generateRandomString();
+
   //create new user obj
   const newUser = {
     id: userId,
@@ -229,17 +215,15 @@ app.post("/register", (req, res) => {
 
   //add new user to the global user object
   users[userId] = newUser;
-  // console.log(users); // check if password is hashed
-
   req.session.userId = userId;
   console.log("user data after registration:", users);
   res.redirect("/urls");
 });
 
-//---------------------------------------------------------
+//-------------------------------------------------------------------
 // route to login page
 app.get("/login", (req, res) => {
-  if (req.user) { // if already logged in, redirect to /urls
+  if (req.user) {
     return res.redirect("/urls");
   }
   res.render("login", { user: req.user});
@@ -247,7 +231,7 @@ app.get("/login", (req, res) => {
 
 // route to handle login form
 app.post("/login", (req, res) => {
-  const { email, password } = req.body; // capture username input
+  const { email, password } = req.body;
   const user = getUserByEmail(email, users);
 
   // error handling
@@ -264,14 +248,14 @@ app.post("/login", (req, res) => {
   req.session.userId = user.id;
   res.redirect("/urls");
 });
-//---------------------------------------------------------
+//-------------------------------------------------------------------
 //route to handle logout page and redirect back to login page
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/login");
 });
 
-//---------------------------------------------------------
+//-------------------------------------------------------------------
 app.listen(PORT, () => { // the code is what gets express app to start running
   console.log(`Example app listening on port ${PORT}!`);
 });
