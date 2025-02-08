@@ -3,7 +3,7 @@ const app           = express();
 const bcrypt        = require("bcryptjs");
 const cookieSession = require("cookie-session");
 const morgan        = require('morgan');
-const { getUserByEmail } = require("./helpers");
+const { getUserByEmail, urlsForUser } = require("./helpers");
 const PORT          = 8080; //default port 8080
 
 app.set("view engine", "ejs");
@@ -37,17 +37,7 @@ const generateRandomString = () => {
   return result;
 };
 
-// function to filter URLS that belong to specific users
-const urlsForUser = (id) => {
-  const userUrls = {}; // will be used to store filtered URLS
 
-  for (let shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userId === id) { // checks if URL belongs to current user, if so, add to filtered URLS
-      userUrls[shortURL] = urlDatabase[shortURL];
-    }
-  }
-  return userUrls; // returns only the URL that belong to current logged in user.
-};
 
 //--------------------------------------------------------
 // key is short URL, value is now an object that contains the long url and the associated user

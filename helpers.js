@@ -8,30 +8,17 @@ const getUserByEmail = (email, database) => {
   return; // no else required to write, shorthand
 };
 
+// function to filter URLS that belong to specific users
+const urlsForUser = (id) => {
+  const userUrls = {}; // will be used to store filtered URLS
+
+  for (let shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userId === id) { // checks if URL belongs to current user, if so, add to filtered URLS
+      userUrls[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userUrls; // returns only the URL that belong to current logged in user.
+};
 
 
-// currently unused functions
-
-// // checks if user is logged in
-// const loggedInUser = (req, res) => {
-//   if (!req.user) {
-//     return res.status(403).send("You must be logged in first")
-//   }
-// };
-
-// // checks if URL exists
-// const checkURL = (shortURL, res) => {
-//   if (!urlDatabase[shortURL]) {
-//     return res.status(404).send("URL not found");
-//   }
-// };
-
-// // function to check if URL belongs to logged in user
-
-// const checkURLOwner = (shortURL, req, res) => {
-//   if (urlDatabase[shortURL].userId !== req.user.id) {
-//     return res.status(403).send("You're not authorized to edit this URL")
-//   }
-// }
-
-module.exports = { getUserByEmail };
+module.exports = { getUserByEmail, urlsForUser };
