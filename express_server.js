@@ -3,7 +3,7 @@ const app           = express();
 const bcrypt        = require("bcryptjs");
 const cookieSession = require("cookie-session");
 const morgan        = require('morgan');
-const { getUserByEmail, urlsForUser } = require("./helpers");
+const { getUserByEmail, urlsForUser, generateRandomString } = require("./helpers");
 const PORT          = 8080; //default port 8080
 
 app.set("view engine", "ejs");
@@ -24,21 +24,6 @@ const setUser = (req, res, next) => {
 };
 
 app.use(setUser);
-//---------------------------------------------------------
-//short url generator
-const generateRandomString = () => {
-  const char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const charLength = char.length;
-  let result = "";
-
-  for (let i = 0; i < 6; i++) {
-    result += char.charAt(Math.floor(Math.random() * charLength));
-  }
-  return result;
-};
-
-
-
 //--------------------------------------------------------
 // key is short URL, value is now an object that contains the long url and the associated user
 const urlDatabase = {
