@@ -56,12 +56,12 @@ const users = {
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
-
+//---------------------------------------------------------
 // returns the urlDatabase in JSON format
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-
+//---------------------------------------------------------
 // Route to render page showing all URLS
 app.get("/urls", (req, res) => {
   if (!req.user) {
@@ -77,7 +77,7 @@ app.get("/urls", (req, res) => {
   //  pass in name of template, object
   res.render("urls_index", templateVars);
 });
-
+//---------------------------------------------------------
 // Route to handle form submission, creates short URL
 app.post("/urls", (req, res) => {
   if (!req.user) {
@@ -136,6 +136,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 //---------------------------------------------------------
+//Route to handle form submission as well as update URL
 app.post("/urls/:id", (req, res) => {
   const shortURL        = req.params.id;
   const updatedLongURL  = req.body.longURL;
@@ -168,7 +169,7 @@ app.get("/u/:id", (req, res) => {
   }
   res.redirect(urlData.longURL);
 });
-
+//---------------------------------------------------------
 // Route to handle deleting URL, and redirects back to url page
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
@@ -197,7 +198,7 @@ app.get("/register", (req, res) => {
   }
   res.render("register", { user: req.user });
 });
-//-----------------------------
+//---------------------------------------------------------
 // Route to handle registration form page
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
@@ -263,6 +264,6 @@ app.post("/logout", (req, res) => {
 });
 
 //---------------------------------------------------------
-app.listen(PORT, () => { // the code is what gets express app to start running
+app.listen(PORT, () => { 
   console.log(`Example app listening on port ${PORT}!`);
 });
